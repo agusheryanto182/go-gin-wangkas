@@ -1,15 +1,28 @@
 {{ define "content" }}
 
-<h2 class="mb-4">List of Transaction</h2>
+<h2 class="mb-4">Daftar Transaksi</h2>
 
-<a href="/transactions/new" class="btn btn-primary mb-3"><i class="fa fa-plus"></i> New Data</a>
+<a href="/transactions/new" class="btn btn-primary mb-3"><i class="fa fa-plus"></i> Data Baru</a>
+
+<!-- Form pencarian -->
+<form action="/transactions/search" method="GET">
+    <div class="form-row">
+        <div class="form-group col-md-2">
+            <label for="MingguKe">Minggu Ke</label>
+            <input type="text" name="MingguKe" class="form-control" placeholder="Minggu Ke">
+        </div>
+        <div class="form-group col-md-2">
+            <button type="submit" class="btn btn-primary mt-4">Cari</button>
+        </div>
+    </div>
+</form>
+
 
 {{ if .Error }}
 <div class="alert alert-danger">
     {{ .Error }}
 </div>
 {{ end }}
-
 
 <div class="card mb-4">
     <div class="card-body">

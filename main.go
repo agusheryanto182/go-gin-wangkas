@@ -58,6 +58,7 @@ func main() {
 	router.POST("/transactions", transactionWebHandler.Create)
 	router.GET("/transactions/edit/:id", transactionWebHandler.Edit)
 	router.POST("/transactions/update/:id", transactionWebHandler.Update)
+	router.GET("/transactions/search", transactionWebHandler.SearchByWeek)
 
 	router.Run()
 }

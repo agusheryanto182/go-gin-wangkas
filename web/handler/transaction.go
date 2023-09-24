@@ -29,6 +29,19 @@ func (h *transactionsHandler) Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "transaction_index.html", gin.H{"transactions": transactions})
 }
 
+func (h *transactionsHandler) SearchByWeek(c *gin.Context) {
+	MingguKe := c.Query("MingguKe")
+	ID, _ := strconv.Atoi(MingguKe)
+
+	transactions, err := h.transactionsService.GetByWeekID(ID)
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", nil)
+		return
+	}
+
+	c.HTML(http.StatusOK, "transaction_index.html", gin.H{"transactions": transactions})
+}
+
 func (h *transactionsHandler) Create(c *gin.Context) {
 	var input transaction.RegisterData
 
