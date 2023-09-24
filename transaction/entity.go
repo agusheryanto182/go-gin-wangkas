@@ -1,19 +1,16 @@
 package transaction
 
 import (
-	"time"
-
 	"github.com/leekchan/accounting"
 )
 
 type Transaction struct {
-	ID               int       `json:"id"`
-	Nama             string    `json:"nama"`
-	TanggalTransaksi time.Time `json:"tanggal_transaksi"`
-	Keterangan       string    `json:"keterangan"`
-	MingguKe         int       `json:"minggu_ke"`
-	JumlahMasuk      int       `json:"jumlah_masuk"`
-	Error            error
+	ID               int    `json:"id"`
+	Nama             string `json:"nama"`
+	TanggalTransaksi string `json:"tanggal_transaksi"`
+	Keterangan       string `json:"keterangan"`
+	MingguKe         int    `json:"minggu_ke"`
+	JumlahMasuk      int    `json:"jumlah_masuk"`
 }
 
 func (Transaction) TableName() string {
@@ -25,6 +22,6 @@ func (c Transaction) FormatIDR() string {
 	return ac.FormatMoney(c.JumlahMasuk)
 }
 
-func (t Transaction) FormatTanggal() string {
-	return t.TanggalTransaksi.Format("02-01-2006")
-}
+// func (t Transaction) FormatTanggal() string {
+// 	return t.TanggalTransaksi.Format("02-01-2006")
+// }

@@ -6,15 +6,12 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/agusheryanto182/go-wangkas/auth"
 	"github.com/agusheryanto182/go-wangkas/handler"
 	"github.com/agusheryanto182/go-wangkas/transaction"
-	"github.com/agusheryanto182/go-wangkas/user"
 	webHandler "github.com/agusheryanto182/go-wangkas/web/handler"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -34,24 +31,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	userRepository := user.NewRepository(db)
-	userService := user.NewService(userRepository)
-
 	transactionRepository := transaction.NewRepository(db)
 	transactionService := transaction.NewService(transactionRepository)
 	transactionHandler := handler.NewTransaksiHandler(transactionService)
 
-	userWebHandler := webHandler.NewUserHandler(userService)
 	transactionWebHandler := webHandler.NewTransactionsHandler(transactionService)
-	sessionWebHandler := webHandler.NewSessionHandler(userService)
 
 	router := gin.Default()
 
 	router.Use(cors.Default())
-
-	cookieStore := cookie.NewStore([]byte(auth.SECRET_KEY))
-
-	router.Use(sessions.Sessions("webcrowdfunding", cookieStore))
 
 	router.HTMLRender = loadTemplates("./web/templates")
 
@@ -65,17 +53,11 @@ func main() {
 	api.GET("/data", transactionHandler.GetAllData)
 	api.GET("/data/weeks/:id", transactionHandler.GetDataByWeekID)
 
-	router.POST("/users", userWebHandler.Create)
-	router.GET("/users/edit/:id", userWebHandler.Edit)
-	router.POST("/users/update/:id", userWebHandler.Update)
-
 	router.GET("/transactions", transactionWebHandler.Index)
-	router.GET("/transactions/edit/:id", transactionWebHandler.Index)
-	router.GET("/transactions/update/:id", transactionWebHandler.Index)
-
-	router.GET("/login", sessionWebHandler.New)
-	router.POST("/session", sessionWebHandler.Create)
-	router.GET("/logout", sessionWebHandler.Destroy)
+	router.GET("/transactions/new", transactionWebHandler.New)
+	router.POST("/transactions", transactionWebHandler.Create)
+	router.GET("/transactions/edit/:id", transactionWebHandler.Edit)
+	router.POST("/transactions/update/:id", transactionWebHandler.Update)
 
 	router.Run()
 }

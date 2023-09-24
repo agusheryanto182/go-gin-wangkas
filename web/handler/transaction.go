@@ -16,6 +16,10 @@ func NewTransactionsHandler(transactionsService transaction.Service) *transactio
 	return &transactionsHandler{transactionsService}
 }
 
+func (h *transactionsHandler) New(c *gin.Context) {
+	c.HTML(http.StatusOK, "transaction_new.html", nil)
+}
+
 func (h *transactionsHandler) Index(c *gin.Context) {
 	transactions, err := h.transactionsService.GetAllDataTransactions()
 	if err != nil {
@@ -26,7 +30,7 @@ func (h *transactionsHandler) Index(c *gin.Context) {
 }
 
 func (h *transactionsHandler) Create(c *gin.Context) {
-	var input transaction.Transaction
+	var input transaction.RegisterData
 
 	err := c.ShouldBind(&input)
 	if err != nil {
@@ -60,7 +64,7 @@ func (h *transactionsHandler) Edit(c *gin.Context) {
 		return
 	}
 
-	input := transaction.Transaction{}
+	input := transaction.FormUpdateDataInput{}
 	input.ID = registeredUser.ID
 	input.Nama = registeredUser.Nama
 	input.TanggalTransaksi = registeredUser.TanggalTransaksi
@@ -75,7 +79,7 @@ func (h *transactionsHandler) Update(c *gin.Context) {
 	idParam := c.Param("id")
 	id, _ := strconv.Atoi(idParam)
 
-	var input transaction.Transaction
+	var input transaction.FormUpdateDataInput
 
 	err := c.ShouldBind(&input)
 	if err != nil {
@@ -85,10 +89,11 @@ func (h *transactionsHandler) Update(c *gin.Context) {
 	}
 	input.ID = id
 
-	_, err = h.transactionsService.UpdateData(input)
+	_, err = h.transactionsService.UpdateData(id, input)
 	if err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", nil)
 		return
 	}
+
 	c.Redirect(http.StatusFound, "/transactions")
 }

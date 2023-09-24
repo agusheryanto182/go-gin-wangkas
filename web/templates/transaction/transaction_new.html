@@ -1,33 +1,38 @@
 {{ define "content" }}
-<h2 class="mb-4">Create New User</h2>
+<h2 class="mb-4">Create New Data</h2>
 
 {{ if .Error }}
-<div class="alert alert-danger">
-    {{ .Error }}
-</div>
+    <div class="alert alert-danger">
+        {{ .Error }}
+    </div>
 {{ end }}
 
 <div class="card mb-4">
     <div class="card-body">
-        <form action="/users" method="POST">
+        <form action="/transactions/new" method="POST">
             <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" name="name" placeholder="Enter name" required class="form-control" value="{{ .Name }}">
+                <label for="Nama">Name</label>
+                <input type="text" name="Nama" placeholder="Enter name" required class="form-control" value="{{ .Nama }}">
             </div>
 
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" name="email" placeholder="Enter email" required class="form-control" value="{{ .Email }}">
+                <label for="TanggalTransaksi">Tanggal Transaksi</label>
+                <input type="date" name="TanggalTransaksi" placeholder="Masukkan tanggal transaksi" required class="form-control" value="{{ .TanggalTransaksi }}">
             </div>
 
             <div class="form-group">
-                <label for="occupation">Occupation</label>
-                <input type="text" name="occupation" placeholder="Enter occupation" required class="form-control" value="{{ .Occupation }}">
+                <label for="Keterangan">Keterangan</label>
+                <input type="text" name="Keterangan" placeholder="Masukkan keterangan" required class="form-control" value="{{ .Keterangan }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="MingguKe">Minggu Ke</label>
+                <input type="text" name="MingguKe" placeholder="Masukkan Minggu ke" required class="form-control" value="{{ .MingguKe }}">
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" name="password" placeholder="Enter password" required class="form-control">
+                <label for="JumlahMasuk">Jumlah Masuk</label>
+                <input type="text" name="JumlahMasuk" placeholder="Masukkan jumlah" required class="form-control" value="{{ .JumlahMasuk }}">
             </div>
 
             <div>

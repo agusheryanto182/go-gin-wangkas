@@ -65,10 +65,10 @@ func (r *repository) FindAllByWeekID(weekID int) ([]Transaction, error) {
 }
 
 func (r *repository) FindAll() ([]Transaction, error) {
-	var transaction []Transaction
-	err := r.db.Find(&transaction).Error
+	var transactions []Transaction
+	err := r.db.Find(&transactions).Error
 	if err != nil {
-		return transaction, err
+		return transactions, err
 	}
-	return transaction, nil
+	return transactions, nil
 }

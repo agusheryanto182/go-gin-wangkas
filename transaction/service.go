@@ -2,7 +2,7 @@ package transaction
 
 type Service interface {
 	CreateData(input Transaction) (Transaction, error)
-	UpdateData(input Transaction) (Transaction, error)
+	UpdateData(inputID int, input FormUpdateDataInput) (Transaction, error)
 	DeleteData(ID int) error
 	GetAllDataTransactions() ([]Transaction, error)
 	GetByID(ID int) (Transaction, error)
@@ -25,8 +25,19 @@ func (s *service) CreateData(input Transaction) (Transaction, error) {
 	return result, nil
 }
 
-func (s *service) UpdateData(input Transaction) (Transaction, error) {
-	result, err := s.repository.Update(input)
+func (s *service) UpdateData(inputID int, input FormUpdateDataInput) (Transaction, error) {
+	transaction, err := s.repository.FindByID(inputID)
+	if err != nil {
+		return transaction, err
+	}
+
+	transaction.Nama = input.Nama
+	transaction.TanggalTransaksi = input.TanggalTransaksi
+	transaction.Keterangan = input.Keterangan
+	transaction.MingguKe = input.MingguKe
+	transaction.JumlahMasuk = input.JumlahMasuk
+
+	result, err := s.repository.Update(transaction)
 	if err != nil {
 		return result, err
 	}

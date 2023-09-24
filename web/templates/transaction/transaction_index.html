@@ -2,6 +2,15 @@
 
 <h2 class="mb-4">List of Transaction</h2>
 
+<a href="/transactions/new" class="btn btn-primary mb-3"><i class="fa fa-plus"></i> New Data</a>
+
+{{ if .Error }}
+<div class="alert alert-danger">
+    {{ .Error }}
+</div>
+{{ end }}
+
+
 <div class="card mb-4">
     <div class="card-body">
         <table class="table mb-0">
@@ -12,16 +21,18 @@
                     <th>Keterangan</th>
                     <th>Minggu Ke</th>
                     <th>Jumlah Masuk</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {{ range .transactions }}
                 <tr>
                     <td>{{ .Nama }}</td>
-                    <td>{{ .FormatTanggal }}</td>
+                    <td>{{ .TanggalTransaksi }}</td>
                     <td>{{ .Keterangan }}</td>
                     <td>{{ .MingguKe }}</td>
                     <td>{{ .FormatIDR }}</td>
+                    <td><a href="/transactions/edit/{{ .ID }}"><i class="fa fa-edit"></i></a></td>
                 </tr>
                 {{ end }}
             </tbody>
