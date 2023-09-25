@@ -35,6 +35,7 @@
                     <th>Minggu Ke</th>
                     <th>Jumlah Masuk</th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -45,7 +46,19 @@
                     <td>{{ .Keterangan }}</td>
                     <td>{{ .MingguKe }}</td>
                     <td>{{ .FormatIDR }}</td>
-                    <td><a href="/transactions/edit/{{ .ID }}"><i class="fa fa-edit"></i></a></td>
+                    <td>
+                        <a href="/transactions/edit/{{ .ID }}" class="action-link">
+                            <i class="fa fa-edit"></i> 
+                        </a>
+                        <td>
+                            <form method="POST" action="/transactions/delete/{{ .ID }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?')">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="delete-button">
+                                    <i class="fa fa-trash"></i> 
+                                </button>
+                            </form>
+                        </td>
+                    </td>                    
                 </tr>
                 {{ end }}
             </tbody>

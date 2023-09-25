@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -103,6 +104,20 @@ func (h *transactionsHandler) Update(c *gin.Context) {
 	input.ID = id
 
 	_, err = h.transactionsService.UpdateData(id, input)
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", nil)
+		return
+	}
+
+	c.Redirect(http.StatusFound, "/transactions")
+}
+func (h *transactionsHandler) Delete(c *gin.Context) {
+	idParam := c.Param("id")
+	id, _ := strconv.Atoi(idParam)
+
+	fmt.Println(id)
+
+	err := h.transactionsService.DeleteData(id)
 	if err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", nil)
 		return

@@ -6,12 +6,15 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/agusheryanto182/go-wangkas/auth"
 	"github.com/agusheryanto182/go-wangkas/handler"
 	"github.com/agusheryanto182/go-wangkas/transaction"
+	"github.com/agusheryanto182/go-wangkas/user"
 	webHandler "github.com/agusheryanto182/go-wangkas/web/handler"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -31,6 +34,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	sessionRepository := user.NewRepository(db)
+	sessionService := user.NewService(sessionRepository)
+	sessionWebHandler := webHandler.NewSessionHandler(sessionService)
+
 	transactionRepository := transaction.NewRepository(db)
 	transactionService := transaction.NewService(transactionRepository)
 	transactionHandler := handler.NewTransaksiHandler(transactionService)
@@ -40,6 +47,10 @@ func main() {
 	router := gin.Default()
 
 	router.Use(cors.Default())
+
+	cookieStore := cookie.NewStore([]byte(auth.SECRET_KEY))
+
+	router.Use(sessions.Sessions("wangkas", cookieStore))
 
 	router.HTMLRender = loadTemplates("./web/templates")
 
@@ -53,12 +64,17 @@ func main() {
 	api.GET("/data", transactionHandler.GetAllData)
 	api.GET("/data/weeks/:id", transactionHandler.GetDataByWeekID)
 
-	router.GET("/transactions", transactionWebHandler.Index)
-	router.GET("/transactions/new", transactionWebHandler.New)
-	router.POST("/transactions", transactionWebHandler.Create)
-	router.GET("/transactions/edit/:id", transactionWebHandler.Edit)
-	router.POST("/transactions/update/:id", transactionWebHandler.Update)
-	router.GET("/transactions/search", transactionWebHandler.SearchByWeek)
+	router.GET("/transactions", AuthAdminMiddleware(), transactionWebHandler.Index)
+	router.GET("/transactions/new", AuthAdminMiddleware(), transactionWebHandler.New)
+	router.POST("/transactions", AuthAdminMiddleware(), transactionWebHandler.Create)
+	router.GET("/transactions/edit/:id", AuthAdminMiddleware(), transactionWebHandler.Edit)
+	router.POST("/transactions/delete/:id", AuthAdminMiddleware(), transactionWebHandler.Delete)
+	router.POST("/transactions/update/:id", AuthAdminMiddleware(), transactionWebHandler.Update)
+	router.GET("/transactions/search", AuthAdminMiddleware(), transactionWebHandler.SearchByWeek)
+
+	router.GET("/login", sessionWebHandler.New)
+	router.POST("/session", sessionWebHandler.Create)
+	router.GET("/logout", sessionWebHandler.Destroy)
 
 	router.Run()
 }
