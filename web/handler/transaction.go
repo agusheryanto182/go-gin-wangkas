@@ -9,19 +9,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type transactionsHandler struct {
+type TransactionHandlerWeb interface {
+	New(c *gin.Context)
+	Index(c *gin.Context)
+	SearchByWeek(c *gin.Context)
+	Create(c *gin.Context)
+	Edit(c *gin.Context)
+	Update(c *gin.Context)
+	Delete(c *gin.Context)
+}
+
+type WebTransactionHandler struct {
 	transactionsService transaction.Service
 }
 
-func NewTransactionsHandler(transactionsService transaction.Service) *transactionsHandler {
-	return &transactionsHandler{transactionsService}
+func NewTransactionsHandler2(transactionsService transaction.Service) *WebTransactionHandler {
+	return &WebTransactionHandler{transactionsService}
 }
 
-func (h *transactionsHandler) New(c *gin.Context) {
+func (h *WebTransactionHandler) New(c *gin.Context) {
 	c.HTML(http.StatusOK, "transaction_new.html", nil)
 }
 
-func (h *transactionsHandler) Index(c *gin.Context) {
+func (h *WebTransactionHandler) Index(c *gin.Context) {
 	transactions, err := h.transactionsService.GetAllDataTransactions()
 	if err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", nil)
@@ -30,7 +40,7 @@ func (h *transactionsHandler) Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "transaction_index.html", gin.H{"transactions": transactions})
 }
 
-func (h *transactionsHandler) SearchByWeek(c *gin.Context) {
+func (h *WebTransactionHandler) SearchByWeek(c *gin.Context) {
 	MingguKe := c.Query("MingguKe")
 	ID, _ := strconv.Atoi(MingguKe)
 
@@ -43,7 +53,7 @@ func (h *transactionsHandler) SearchByWeek(c *gin.Context) {
 	c.HTML(http.StatusOK, "transaction_index.html", gin.H{"transactions": transactions})
 }
 
-func (h *transactionsHandler) Create(c *gin.Context) {
+func (h *WebTransactionHandler) Create(c *gin.Context) {
 	var input transaction.RegisterData
 
 	err := c.ShouldBind(&input)
@@ -68,7 +78,7 @@ func (h *transactionsHandler) Create(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/transactions")
 }
 
-func (h *transactionsHandler) Edit(c *gin.Context) {
+func (h *WebTransactionHandler) Edit(c *gin.Context) {
 	idParam := c.Param("id")
 	id, _ := strconv.Atoi(idParam)
 
@@ -89,7 +99,7 @@ func (h *transactionsHandler) Edit(c *gin.Context) {
 	c.HTML(http.StatusOK, "transaction_edit.html", input)
 }
 
-func (h *transactionsHandler) Update(c *gin.Context) {
+func (h *WebTransactionHandler) Update(c *gin.Context) {
 	idParam := c.Param("id")
 	id, _ := strconv.Atoi(idParam)
 
@@ -111,7 +121,7 @@ func (h *transactionsHandler) Update(c *gin.Context) {
 
 	c.Redirect(http.StatusFound, "/transactions")
 }
-func (h *transactionsHandler) Delete(c *gin.Context) {
+func (h *WebTransactionHandler) Delete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, _ := strconv.Atoi(idParam)
 

@@ -8,19 +8,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type sessionHandler struct {
+type Handler interface {
+	New(c *gin.Context)
+	Create(c *gin.Context)
+	Destroy(c *gin.Context)
+}
+
+type SessionHandler struct {
 	userService user.Service
 }
 
-func NewSessionHandler(userService user.Service) *sessionHandler {
-	return &sessionHandler{userService}
+func NewSessionHandler(userService user.Service) *SessionHandler {
+	return &SessionHandler{userService}
 }
 
-func (h *sessionHandler) New(c *gin.Context) {
+func (h *SessionHandler) New(c *gin.Context) {
 	c.HTML(http.StatusOK, "session_new.html", nil)
 }
 
-func (h *sessionHandler) Create(c *gin.Context) {
+func (h *SessionHandler) Create(c *gin.Context) {
 	var input user.User
 
 	err := c.ShouldBind(&input)
@@ -43,7 +49,7 @@ func (h *sessionHandler) Create(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/transactions")
 }
 
-func (h *sessionHandler) Destroy(c *gin.Context) {
+func (h *SessionHandler) Destroy(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
 	session.Save()

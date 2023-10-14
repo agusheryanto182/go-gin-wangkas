@@ -13,15 +13,15 @@ type Repository interface {
 	FindAll() ([]Transaction, error)
 }
 
-type repository struct {
+type TransactionRepository struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) *repository {
-	return &repository{db}
+func NewRepository(db *gorm.DB) *TransactionRepository {
+	return &TransactionRepository{db}
 }
 
-func (r *repository) Save(transaction Transaction) (Transaction, error) {
+func (r *TransactionRepository) Save(transaction Transaction) (Transaction, error) {
 	err := r.db.Create(&transaction).Error
 	if err != nil {
 		return transaction, err
@@ -29,7 +29,7 @@ func (r *repository) Save(transaction Transaction) (Transaction, error) {
 	return transaction, nil
 }
 
-func (r *repository) Update(transaction Transaction) (Transaction, error) {
+func (r *TransactionRepository) Update(transaction Transaction) (Transaction, error) {
 	err := r.db.Save(&transaction).Error
 	if err != nil {
 		return transaction, err
@@ -37,7 +37,7 @@ func (r *repository) Update(transaction Transaction) (Transaction, error) {
 	return transaction, nil
 }
 
-func (r *repository) Delete(ID int) error {
+func (r *TransactionRepository) Delete(ID int) error {
 	var transaction Transaction
 	err := r.db.Where("id = ?", ID).Delete(&transaction).Error
 	if err != nil {
@@ -46,7 +46,7 @@ func (r *repository) Delete(ID int) error {
 	return nil
 }
 
-func (r *repository) FindByID(ID int) (Transaction, error) {
+func (r *TransactionRepository) FindByID(ID int) (Transaction, error) {
 	var transaction Transaction
 	err := r.db.Where("id = ?", ID).Find(&transaction).Error
 	if err != nil {
@@ -55,7 +55,7 @@ func (r *repository) FindByID(ID int) (Transaction, error) {
 	return transaction, nil
 }
 
-func (r *repository) FindAllByWeekID(weekID int) ([]Transaction, error) {
+func (r *TransactionRepository) FindAllByWeekID(weekID int) ([]Transaction, error) {
 	var transaction []Transaction
 	err := r.db.Where("minggu_ke = ?", weekID).Find(&transaction).Error
 	if err != nil {
@@ -64,7 +64,7 @@ func (r *repository) FindAllByWeekID(weekID int) ([]Transaction, error) {
 	return transaction, nil
 }
 
-func (r *repository) FindAll() ([]Transaction, error) {
+func (r *TransactionRepository) FindAll() ([]Transaction, error) {
 	var transactions []Transaction
 	err := r.db.Find(&transactions).Error
 	if err != nil {
